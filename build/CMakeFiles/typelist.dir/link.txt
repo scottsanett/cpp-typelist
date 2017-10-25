@@ -1,1 +1,0 @@
-/usr/local/bin/g++-7  -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/typelist.dir/main.cpp.o  -o typelist 
