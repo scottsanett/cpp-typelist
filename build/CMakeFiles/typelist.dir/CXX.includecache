@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/scott/Projects/typelist/main.cpp
+iostream
+-
+typelist.hpp
+/Users/scott/Projects/typelist/typelist.hpp
+
+/Users/scott/Projects/typelist/typelist.hpp
+type_traits
+-
+utility
+-
+

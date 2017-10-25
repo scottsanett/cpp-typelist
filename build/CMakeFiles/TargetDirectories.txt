@@ -1,0 +1,3 @@
+/Users/scott/Projects/typelist/build/CMakeFiles/rebuild_cache.dir
+/Users/scott/Projects/typelist/build/CMakeFiles/edit_cache.dir
+/Users/scott/Projects/typelist/build/CMakeFiles/typelist.dir
