@@ -17,7 +17,7 @@ For this factory to work, one needs to make it possible to the user to create fa
 
 One needs to be able to:
 
-1. create a `WidgetFactory` by passing a parameter list to an `AbstractFactory` template:
+1. create a `WidgetFactory` by passing a parameter list to an `AbstractFactory` template****:
 	
 	```cpp
 	typedef AbstractFactory<Window, Button, ScrollBar> WidgetFactory;

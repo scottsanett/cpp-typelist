@@ -38,13 +38,16 @@ int main() {
 	std::cout << Length<numbers3> << std::endl; // expecting 5
 	std::cout << Length<EraseDuplicates<Append<numbers3, Unsigned<7>>>> << std::endl; //expecting 4
 
-	using num = Minus<Plus<Unsigned<10>, Unsigned<20>>, Unsigned<5>>;
-	std::cout << num::value << std::endl; // expecting 25
+//	using num = Minus<Plus<Unsigned<10>, Unsigned<20>>, Unsigned<5>>;
+//	std::cout << num::value << std::endl; // expecting 25
 
 	using temp = ForEach<numbers, plus_100>;
 	std::cout << TypeAt<temp, 1>{} << std::endl; // expecting 103
 
 	using intlist = List<Integer<-100>, Integer<-1>, Integer<100>>;
 	std::cout << TypeAt<ForEach<intlist, plus_100>, 1>{} << std::endl; // expecting 99;
+
+	std::cout << Plus<Integer<1>, Integer<2>, Integer<3>, Integer<4>>{} << std::endl; // expecting 10
+	std::cout << Minus<Integer<1>, Integer<2>, Integer<3>, Integer<4>>{} << std::endl; // expecting -1, from right to left
 
 }
