@@ -22,7 +22,7 @@ int main() {
 	std::cout << Length<numbers> << std::endl; // expecting 4
 
 	std::cout << numbers::Tail::Tail::Tail::Head::value << std::endl; //expecting 7
-	std::cout << TypeAt<numbers, 2>::value << std::endl; // expecting 5
+	std::cout << TypeAt<numbers, 2>{} << std::endl; // expecting 5
 
 	std::cout << IndexOf<numbers, Unsigned<7>> << std::endl; // expecting 3
 	std::cout << IndexOf<numbers, Unsigned<4>> << std::endl; // expecting -1
@@ -42,9 +42,9 @@ int main() {
 	std::cout << num::value << std::endl; // expecting 25
 
 	using temp = ForEach<numbers, plus_100>;
-	std::cout << temp::Tail::Head::value << std::endl; // expecting 103
+	std::cout << TypeAt<temp, 1>{} << std::endl; // expecting 103
 
 	using intlist = List<Integer<-100>, Integer<-1>, Integer<100>>;
-	std::cout << ForEach<intlist, plus_100>::Head::value << std::endl; // expecting 0;
+	std::cout << TypeAt<ForEach<intlist, plus_100>, 1>{} << std::endl; // expecting 99;
 
 }
