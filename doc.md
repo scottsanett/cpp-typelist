@@ -69,10 +69,20 @@ else
 ### Remove only the first occurrence
 
 if `TList` is `NullType`:
-* `Result` is `NullType`
+- `Result` is `NullType`
 
 else if `T` is `TList::Head`:
-* `Result` is `TList::Tail`
+- `Result` is `TList::Tail`
 
 else:
-* Result is `Typelist` having `TList::Head` as its head and the result of applying `Erase` to `TList::Tail` and `T` as its tail
+- Result is `Typelist` having `TList::Head` as its head and the result of applying `Erase` to `TList::Tail` and `T` as its tail
+
+
+## Erase Duplicates
+
+if `TList` is `NullType`, `result` is `NullType`
+
+else
+- apply `EraseDuplicates` to `TList::Tail` and yield a temporary `L1`
+- apple `Erase` to `L1` and `TList::Head` and yield a temporary `L2`
+- Result is a typelist that has `TList::Head` as head and `L2` as tail.

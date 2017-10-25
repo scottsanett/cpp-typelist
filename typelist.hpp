@@ -4,20 +4,38 @@
 #include <type_traits>
 #include <utility>
 
-// NullType serves as a null marker for types
-class NullType {};
-
-// this is a legal type to inherit from
-struct EmptyType {};
-
-template <class T, class U>
-struct Typelist {
-	using Head = T;
-	using Tail = U;
-};
-
 // everything related to typelists except the definition of Typelist itself lives in the TL namespace
 namespace TL {
+
+	// NullType serves as a null marker for types
+	class NullType {};
+	
+	// this is a legal type to inherit from
+	struct EmptyType {};
+	
+	template <class T, class U>
+	struct Typelist {
+		using Head = T;
+		using Tail = U;
+	};
+
+	// a template I wrote myself to make a list, seems to be working fine
+	/**
+	 * Args... take 0 or more arguments, so an empty list is now possible
+	 */
+	template <typename... Args>
+	struct MakeList {
+		using type = NullType;
+	};
+
+	template <typename... Args>
+	using MakeList_t = typename MakeList<Args...>::type;
+
+	template <typename T, typename... Args>
+	struct MakeList<T, Args...> {
+		using type = Typelist<T, typename MakeList<Args...>::type>;
+	};
+
 	template <typename T, typename = std::void_t<>, typename = std::void_t<>>
 	struct has_head_and_tail {
 		inline constexpr static bool value = false;
@@ -58,140 +76,145 @@ namespace TL {
 			inline constexpr static bool value = get();
 	};
 
-	template <typename T>
-	inline constexpr static bool is_typelist_v = is_typelist<T>::value;
-
-
-	// a template I wrote myself to make a list, seems to be working fine
-	/**
-	 * Args... take 0 or more arguments, so an empty list is now possible
-	 */
-	template <typename... Args>
-	struct MakeList {
-		using type = NullType;
-	};
-
-	template <typename... Args>
-	using MakeList_t = typename MakeList<Args...>::type;
-
-	template <typename T, typename... Args>
-	struct MakeList<T, Args...> {
-		using type = Typelist<T, typename MakeList<Args...>::type>;
-	};
 
 	template <class TList> 
-	struct Length {
-		inline constexpr static int value = 1 + Length<typename TList::Tail>::value;
+	struct LengthType {
+		inline constexpr static int value = 1 + LengthType<typename TList::Tail>::value;
 	};
 
 	template <class TList>
-	inline constexpr static int Length_v = Length<TList>::value;
+	inline constexpr static int Length = LengthType<TList>::value;
 	
 	template <> 
-	struct Length<NullType> {
+	struct LengthType<NullType> {
 		inline constexpr static int value = 0;
 	};
 
 
 	template <class TList, unsigned int index>
-	struct TypeAt {
-		using type = typename TypeAt<typename TList::Tail, index - 1>::type;
+	struct TypeAtType {
+		using type = typename TypeAtType<typename TList::Tail, index - 1>::type;
 	};
 
-	template <class TList, unsigned int index>
-	using TypeAt_t = typename TypeAt<TList, index>::type;
-
 	template <class Head, class Tail>
-	struct TypeAt<Typelist<Head, Tail>, 0> {
+	struct TypeAtType<Typelist<Head, Tail>, 0> {
 		using type = Head;
 	};
 
 
 	// T is a typelist and has a tail member type
 	template <typename T, typename D>
-	struct IndexOf {
+	struct IndexOfType {
 	private:
-		inline constexpr static int temp = IndexOf<typename T::Tail, D>::value;
+		inline constexpr static int temp = IndexOfType<typename T::Tail, D>::value;
 	public:
 		inline constexpr static int value = (temp == -1) ? -1 : temp + 1;
 	};
 
-	template <typename T, typename D>
-	inline constexpr static int IndexOf_v = IndexOf<T, D>::value;
-
 	template <typename T>
-	struct IndexOf<NullType, T> {
+	struct IndexOfType<NullType, T> {
 		inline constexpr static int value = -1;
 	};
 
 	// T doesn't have a Tail, as T is not a typelist
 	template <typename T, typename Tail>
-	struct IndexOf<Typelist<T, Tail>, T> {
+	struct IndexOfType<Typelist<T, Tail>, T> {
 		inline constexpr static int value = 0;
 	};
 
 	template <typename List, typename T>
-	struct Append {
-		using type = Typelist<typename List::Head, typename Append<typename List::Tail, T>::type>;
+	struct AppendType {
+		using type = Typelist<typename List::Head, typename AppendType<typename List::Tail, T>::type>;
 	};
 
-	template <typename List, typename T>
-	using Append_t = typename Append<List, T>::type;
-
 	template <>
-	struct Append<NullType, NullType> {
+	struct AppendType<NullType, NullType> {
 		using type = NullType;
 	};
 
 	template <typename T>
-	struct Append<NullType, T> {
+	struct AppendType<NullType, T> {
 		using type = Typelist<T, NullType>;
 	};
 
 	template <typename Head, typename Tail>
-	struct Append<NullType, Typelist<Head, Tail>> {
+	struct AppendType<NullType, Typelist<Head, Tail>> {
 		using type = Typelist<Head, Tail>;
 	};
 
 	template <typename TList, typename T>
-	struct Erase {
-		using type = Typelist<typename TList::Head, typename Erase<typename TList::Tail, T>::type>;
+	struct EraseType {
+		using type = Typelist<typename TList::Head, typename EraseType<typename TList::Tail, T>::type>;
 	};
 
-	template <typename TList, typename T>
-	using Erase_t = typename Erase<TList, T>::type;
-
 	template <typename T>
-	struct Erase<NullType, T> {
+	struct EraseType<NullType, T> {
 		using type = NullType;
 	};
 
 	template <typename T, typename Tail>
-	struct Erase<Typelist<T, Tail>, T> {
+	struct EraseType<Typelist<T, Tail>, T> {
 		using type = Tail;
 	};
 
 	template <typename TList, typename T>
-	struct EraseAll {
-		using type = Typelist<typename TList::Head, typename EraseAll<typename TList::Tail, T>::type>;
+	struct EraseAllType {
+		using type = Typelist<typename TList::Head, typename EraseAllType<typename TList::Tail, T>::type>;
 	};
 
-	template <typename TList, typename T>
-	using EraseAll_t = typename EraseAll<TList, T>::type;
-
 	template <typename T>
-	struct EraseAll<NullType, T> {
+	struct EraseAllType<NullType, T> {
 		using type = NullType;
 	};
 
 	// go all the way down the list removing the type
 	template <typename T, typename Tail>
-	struct EraseAll<Typelist<T, Tail>, T> {
-		using type = EraseAll<Tail, T>;
+	struct EraseAllType<Typelist<T, Tail>, T> {
+		using type = EraseAllType<Tail, T>;
+	};
+
+	template <typename TList>
+	struct EraseDuplicatesType {
+	private:
+		using temp1 = typename EraseDuplicatesType<typename TList::Tail>::type;
+		using temp2 = typename EraseType<temp1, typename TList::Head>::type;
+	public:
+		using type = Typelist<typename TList::Head, temp2>;
+	};
+
+	template <>
+	struct EraseDuplicatesType<NullType> {
+		using type = NullType;
 	};
 
 }
 
+template <typename... Args>	
+using List = TL::MakeList_t<Args...>;
+
+template <class TList>
+inline constexpr static int Length = TL::LengthType<TList>::value;
+
+template <class TList, unsigned int index>
+using TypeAt = typename TL::TypeAtType<TList, index>::type;
+
+template <typename T, typename D>
+inline constexpr static int IndexOf = TL::IndexOfType<T, D>::value;
+
+template <typename List, typename T>
+using Append = typename TL::AppendType<List, T>::type;
+
+template <typename TList, typename T>
+using Erase = typename TL::EraseType<TList, T>::type;
+
+template <typename TList, typename T>
+using EraseAll = typename TL::EraseAllType<TList, T>::type;
+
+template <typename TList>
+using EraseDuplicates = typename TL::EraseDuplicatesType<TList>::type;
+
+template <typename T>
+inline constexpr static bool IsTypelist = TL::is_typelist<T>::value;
 
 
 #endif //TYPELIST_HPP
