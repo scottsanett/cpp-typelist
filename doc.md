@@ -83,6 +83,6 @@ else:
 if `TList` is `NullType`, `result` is `NullType`
 
 else
-- apply `EraseDuplicates` to `TList::Tail` and yield a temporary `L1`
-- apple `Erase` to `L1` and `TList::Head` and yield a temporary `L2`
+- apply `EraseDuplicates` to `TList::Tail` and yield a temporary `L1` (`L1` has no duplicates)
+- apple `Erase` to `L1` and `TList::Head` and yield a temporary `L2` (remove all `TList::Head` occurrences in `L1`)
 - Result is a typelist that has `TList::Head` as head and `L2` as tail.

@@ -4,7 +4,6 @@
 #include <type_traits>
 #include <utility>
 
-// everything related to typelists except the definition of Typelist itself lives in the TL namespace
 namespace TL {
 
 	// NullType serves as a null marker for types
@@ -19,7 +18,6 @@ namespace TL {
 		using Tail = U;
 	};
 
-	// a template I wrote myself to make a list, seems to be working fine
 	/**
 	 * Args... take 0 or more arguments, so an empty list is now possible
 	 */
@@ -187,6 +185,24 @@ namespace TL {
 		using type = NullType;
 	};
 
+	template <typename TList, template <typename> typename Func>
+	struct ForEachType {
+		using type = Typelist<
+			typename Func<typename TList::Head>::type, 
+			typename ForEachType<typename TList::Tail, Func>
+		::type>;
+	};
+
+	template <typename T, template <typename> typename Func>
+	struct ForEachType<Typelist<T, NullType>, Func> {
+		using type = Typelist<typename Func<T>::type, NullType>;
+	};
+
+	template <template <typename> typename Func>
+	struct ForEachType<NullType, Func> {
+		using type = NullType;
+	};
+
 }
 
 template <typename... Args>	
@@ -216,5 +232,7 @@ using EraseDuplicates = typename TL::EraseDuplicatesType<TList>::type;
 template <typename T>
 inline constexpr static bool IsTypelist = TL::is_typelist<T>::value;
 
+template <typename TList, template <typename> typename Func>
+using ForEach = typename TL::ForEachType<TList, Func>::type;
 
 #endif //TYPELIST_HPP
