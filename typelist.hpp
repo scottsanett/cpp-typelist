@@ -185,6 +185,23 @@ namespace TL {
 		using type = NullType;
 	};
 
+	template <typename TList, typename T, typename U>
+	struct ReplaceType {
+		using type = Typelist<
+			typename TList::Head, 
+			typename ReplaceType<typename TList::Tail, T, U>::type>;
+	};
+
+	template <typename T, typename U>
+	struct ReplaceType<NullType, T, U> {
+		using type = NullType;
+	};
+
+	template <typename T, typename Tail, typename U>
+	struct ReplaceType<Typelist<T, Tail>, T, U> {
+		using type = Typelist<U, Tail>;
+	};
+
 	template <typename TList, template <typename> typename Func>
 	struct ForEachType {
 		using type = Typelist<
@@ -228,6 +245,9 @@ using EraseAll = typename TL::EraseAllType<TList, T>::type;
 
 template <typename TList>
 using EraseDuplicates = typename TL::EraseDuplicatesType<TList>::type;
+
+template <typename TList, typename T, typename U>
+using Replace = typename TL::ReplaceType<TList, T, U>::type;
 
 template <typename T>
 inline constexpr static bool IsTypelist = TL::is_typelist<T>::value;

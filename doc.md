@@ -86,3 +86,14 @@ else
 - apply `EraseDuplicates` to `TList::Tail` and yield a temporary `L1` (`L1` has no duplicates)
 - apple `Erase` to `L1` and `TList::Head` and yield a temporary `L2` (remove all `TList::Head` occurrences in `L1`)
 - Result is a typelist that has `TList::Head` as head and `L2` as tail.
+
+## Replace an Element
+
+Input: Typelist `TList`, type `T` to replace, type `U` to replace with
+Output: inner type definition `result`
+
+if `TList` is `NullType, `result` is `NullType`
+
+else
+* if the `TList::Head` is `T`, `result` is a Typelist<U, TList::Tail>
+* else `result` is a typelist with `TList::Head` as its head and the result of applying `Replace` to `TList`, `T` and `U` as its tail

@@ -16,7 +16,7 @@ std::ostream& operator<< (std::ostream & os, Character<ch> t) {
 
 template <int num>
 struct Integer {
-	constexpr static inline unsigned int value = num;
+	constexpr static inline int value = num;
 };
 
 template <int num>
@@ -34,6 +34,9 @@ std::ostream& operator<< (std::ostream & os, Unsigned<num> t) {
 	return (os << num);
 }
 
+///////////////////////////////
+//////////////PLUS/////////////
+///////////////////////////////
 
 template <typename T1, typename T2>
 struct PlusType {};
@@ -89,6 +92,7 @@ using Plus = typename PlusImpl<T...>::type;
 ///////////////////////////////
 /////////////MINUS/////////////
 ///////////////////////////////
+
 template <typename T1, typename T2>
 struct MinusType {};
 
