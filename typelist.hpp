@@ -76,15 +76,15 @@ namespace TL {
 
 
 	template <class TList> 
-	struct LengthType {
-		inline constexpr static int value = 1 + LengthType<typename TList::Tail>::value;
+	struct SizeType {
+		inline constexpr static int value = 1 + SizeType<typename TList::Tail>::value;
 	};
 
 	template <class TList>
-	inline constexpr static int Length = LengthType<TList>::value;
+	inline constexpr static int Size = SizeType<TList>::value;
 	
 	template <> 
-	struct LengthType<NullType> {
+	struct SizeType<NullType> {
 		inline constexpr static int value = 0;
 	};
 
@@ -138,6 +138,25 @@ namespace TL {
 	template <typename Head, typename Tail>
 	struct AppendType<NullType, Typelist<Head, Tail>> {
 		using type = Typelist<Head, Tail>;
+	};
+
+	template <typename TList, typename T, size_t index>
+	struct InsertType {
+		static_assert((index < SizeType<TList>::value), "Error: insertion out of bound");
+		using type = Typelist<
+			typename TList::Head, 
+			typename InsertType<typename TList::Tail, T, index - 1>::type
+			>;
+	};
+
+	template <typename TList, typename T>
+	struct InsertType<TList, T, 0> {
+		using type = Typelist<typename TList::Head, Typelist<T, typename TList::Tail>>;
+	};
+
+	template <typename TList, size_t index>
+	struct InsertType<TList, NullType, index> {
+		using type = TList;
 	};
 
 	template <typename TList, typename T>
@@ -226,7 +245,7 @@ template <typename... Args>
 using List = TL::MakeList_t<Args...>;
 
 template <class TList>
-inline constexpr static int Length = TL::LengthType<TList>::value;
+inline constexpr static int Size = TL::SizeType<TList>::value;
 
 template <class TList, unsigned int index>
 using TypeAt = typename TL::TypeAtType<TList, index>::type;
@@ -236,6 +255,9 @@ inline constexpr static int IndexOf = TL::IndexOfType<T, D>::value;
 
 template <typename List, typename T>
 using Append = typename TL::AppendType<List, T>::type;
+
+template <typename TList, typename T, size_t index>
+using Insert = typename TL::InsertType<TList, T, index>::type;
 
 template <typename TList, typename T>
 using Erase = typename TL::EraseType<TList, T>::type;

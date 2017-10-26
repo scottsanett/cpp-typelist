@@ -19,7 +19,7 @@ struct plus_100<Integer<num>> {
 int main() {
 	using numbers = List<Unsigned<1>, Unsigned<3>, Unsigned<5>, Unsigned<7>>;
 
-	std::cout << Length<numbers> << std::endl; // expecting 4
+	std::cout << Size<numbers> << std::endl; // expecting 4
 
 	std::cout << numbers::Tail::Tail::Tail::Head::value << std::endl; //expecting 7
 	std::cout << TypeAt<numbers, 2>::value << std::endl; // expecting 5
@@ -35,8 +35,8 @@ int main() {
 	std::cout << IsTypelist<int> << std::endl; // expecting false
 	
 	using numbers3 = Append<Append<numbers2, Unsigned<7>>, Unsigned<7>>;
-	std::cout << Length<numbers3> << std::endl; // expecting 5
-	std::cout << Length<EraseDuplicates<Append<numbers3, Unsigned<7>>>> << std::endl; //expecting 4
+	std::cout << Size<numbers3> << std::endl; // expecting 5
+	std::cout << Size<EraseDuplicates<Append<numbers3, Unsigned<7>>>> << std::endl; //expecting 4
 
 	using num = Minus<Plus<Unsigned<10>, Unsigned<20>>, Unsigned<5>>;
 	std::cout << num::value << std::endl; // expecting 25
@@ -51,4 +51,6 @@ int main() {
 	std::cout << Minus<Integer<1>, Integer<2>, Integer<3>, Integer<4>>::value << std::endl; // expecting -1, from right to left
 
 	std::cout << TypeAt<Replace<List<Integer<0>>, Integer<0>, Integer<100>>, 0>::value << std::endl;
+
+	std::cout << TypeAt<Insert<List<Integer<0>, Integer<1>>, Integer<-1>, 2>, 2>::value << std::endl;
 }
