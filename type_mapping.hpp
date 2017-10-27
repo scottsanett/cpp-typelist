@@ -1,4 +1,5 @@
-
+#ifndef TYPE_MAPPING_HPP
+#define TYPE_MAPPING_HPP
 
 namespace TL {
 	template <unsigned int num>
@@ -11,3 +12,5 @@ namespace TL {
 		using OriginalType = T;
 	};
 };
+
+#endif
