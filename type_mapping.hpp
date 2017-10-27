@@ -1,9 +1,9 @@
 
 
 namespace TL {
-	template <int num>
+	template <unsigned int num>
 	struct Int2Type {
-		inline constexpr static int value = v;
+		inline constexpr static int value = num;
 	};
 
 	template <typename T>
