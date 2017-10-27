@@ -59,8 +59,6 @@ int main() {
 
 	std::cout << TypeAt<Insert<List<Integer<0>, Integer<1>>, Integer<-1>, 0>, 2>::value << std::endl; // expecting 1
 
-	std::cout << IndexOf<DerivedToFront<List<A, B, C, D>>, A> << std::endl;
-
-//	std::cout << std::is_base_of_v<A, D> << std::endl;
+	std::cout << IndexOf<DerivedToFront<List<A, B, C, D>>, A> << std::endl; // expecting 3 
 
 }
