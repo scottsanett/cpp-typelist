@@ -1,6 +1,7 @@
 #include <iostream>
 #include "typelist.hpp"
 #include "numerics.hpp"
+#include "hierarchy_generator.hpp"
 
 template <typename T>
 struct plus_100 {};

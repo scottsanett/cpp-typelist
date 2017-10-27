@@ -13,6 +13,7 @@ namespace TL {
 		using LeftBase = GenerateScatteredHierarchy<TList::Head, Unit>;
 		using RightBase = GenerateScatteredHierarchy<TList::Tail, Unit>;
 
+		// making it possible to access a member by its type
 		template <typename T>
 		struct Rebind {
 			using type = Unit<T>;
@@ -27,6 +28,8 @@ namespace TL {
 	template <typename <typename> class Unit>
 	struct GenerateScatteredHierarchy<NullType, Unit> {};
 
+
+	// retain a field member
 	template <typename T, typename D>
 	typename D::template Rebind<T>::type& Field(D& obj) {
 		return obj;
