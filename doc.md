@@ -97,3 +97,25 @@ if `TList` is `NullType, `result` is `NullType`
 else
 * if the `TList::Head` is `T`, `result` is a Typelist<U, TList::Tail>
 * else `result` is a typelist with `TList::Head` as its head and the result of applying `Replace` to `TList`, `T` and `U` as its tail
+
+## Sort the typelist from most derived to least derived
+
+### `DerivedToFront`
+
+if `TList` is `NullType`, `result` is `NullType`
+
+else 
+* Find the most derived type from `TList::Head` in `TList::Tail`, store it in `TheMostDerived`
+* Replace `TheMostDerived` in `TList::Tail` with `TList::Head`, obtaining `L`
+* Build the result having `TheMostDerived` as head and `L` as its tail
+
+### `MostDerived`
+input: Typelist `TList`, type `Base`
+output: `result`
+
+if `TList` is `NullType`, `result` is `T`
+
+else
+* apply `MostDerived` to `TList::Tail` and `Base`, obtaining `Candidate`
+* if `TList::Head` is derived from `Candidate`, the result is `TList::Head`
+* else the result is `Candidate`

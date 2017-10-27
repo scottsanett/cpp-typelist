@@ -15,6 +15,11 @@ struct plus_100<Integer<num>> {
 	using type = Integer<num + 100>;
 };
 
+struct A{};
+struct B: public A {};
+struct C: public B {};
+struct D: public C {};
+
 
 int main() {
 	using numbers = List<Unsigned<1>, Unsigned<3>, Unsigned<5>, Unsigned<7>>;
@@ -33,7 +38,7 @@ int main() {
 	std::cout << IsTypelist<List<>> << std::endl; // expecting true
 	std::cout << IsTypelist<numbers> << std::endl; // expecting true
 	std::cout << IsTypelist<int> << std::endl; // expecting false
-	
+
 	using numbers3 = Append<Append<numbers2, Unsigned<7>>, Unsigned<7>>;
 	std::cout << Size<numbers3> << std::endl; // expecting 5
 	std::cout << Size<EraseDuplicates<Append<numbers3, Unsigned<7>>>> << std::endl; //expecting 4
@@ -50,7 +55,12 @@ int main() {
 	std::cout << Plus<Integer<1>, Integer<2>, Integer<3>, Integer<4>>::value << std::endl; // expecting 10
 	std::cout << Minus<Integer<1>, Integer<2>, Integer<3>, Integer<4>>::value << std::endl; // expecting -1, from right to left
 
-	std::cout << TypeAt<Replace<List<Integer<0>>, Integer<0>, Integer<100>>, 0>::value << std::endl;
+	std::cout << TypeAt<Replace<List<Integer<0>>, Integer<0>, Integer<100>>, 0>::value << std::endl; // expecting 100
 
-	std::cout << TypeAt<Insert<List<Integer<0>, Integer<1>>, Integer<-1>, 2>, 2>::value << std::endl;
+	std::cout << TypeAt<Insert<List<Integer<0>, Integer<1>>, Integer<-1>, 0>, 2>::value << std::endl; // expecting 1
+
+	std::cout << IndexOf<DerivedToFront<List<A, B, C, D>>, A> << std::endl;
+
+//	std::cout << std::is_base_of_v<A, D> << std::endl;
+
 }

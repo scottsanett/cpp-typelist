@@ -8,10 +8,10 @@ namespace TL {
 
 	// NullType serves as a null marker for types
 	class NullType {};
-	
+
 	// this is a legal type to inherit from
 	struct EmptyType {};
-	
+
 	template <class T, class U>
 	struct Typelist {
 		using Head = T;
@@ -38,28 +38,28 @@ namespace TL {
 	struct has_head_and_tail {
 		inline constexpr static bool value = false;
 	};
-	
+
 	template <typename T, typename T1 = std::void_t<>, typename T2 = std::void_t<>>
 	inline constexpr static bool has_head_and_tail_v = has_head_and_tail<T, T1, T2>::value;
-	
+
 	template <typename T>
 	struct has_head_and_tail<T,
-		std::void_t<typename T::Head>, 
+		std::void_t<typename T::Head>,
 		std::void_t<typename T::Tail>> {
 		inline constexpr static bool value = true;
 	};
-	
+
 	template <typename T>
 	struct is_nulltype {
 		inline constexpr static bool value = false;
 	};
-	
+
 	template <typename T>
 	inline constexpr static bool is_nulltype_v = is_nulltype<T>::value;
-	
+
 	template <>
 	struct is_nulltype<NullType>: std::true_type {};
-	
+
 	template <typename T>
 	struct is_typelist {
 		private:
@@ -69,21 +69,21 @@ namespace TL {
 				else if constexpr (is_nulltype_v<typename T::Head>) return false;
 				else return is_typelist<typename T::Tail>::value;
 			}
-	
+
 		public:
 			inline constexpr static bool value = get();
 	};
 
 
-	template <class TList> 
+	template <class TList>
 	struct SizeType {
 		inline constexpr static int value = 1 + SizeType<typename TList::Tail>::value;
 	};
 
 	template <class TList>
 	inline constexpr static int Size = SizeType<TList>::value;
-	
-	template <> 
+
+	template <>
 	struct SizeType<NullType> {
 		inline constexpr static int value = 0;
 	};
@@ -144,7 +144,7 @@ namespace TL {
 	struct InsertType {
 		static_assert((index < SizeType<TList>::value), "Error: insertion out of bound");
 		using type = Typelist<
-			typename TList::Head, 
+			typename TList::Head,
 			typename InsertType<typename TList::Tail, T, index - 1>::type
 			>;
 	};
@@ -207,7 +207,7 @@ namespace TL {
 	template <typename TList, typename T, typename U>
 	struct ReplaceType {
 		using type = Typelist<
-			typename TList::Head, 
+			typename TList::Head,
 			typename ReplaceType<typename TList::Tail, T, U>::type>;
 	};
 
@@ -221,10 +221,41 @@ namespace TL {
 		using type = Typelist<U, Tail>;
 	};
 
+	template <typename TList, typename Base>
+	struct MostDerivedType {
+	private:
+		using candidate = typename MostDerivedType<typename TList::Tail, Base>::type;
+	public:
+		using type = std::conditional_t<
+			std::is_base_of_v<candidate, typename TList::Head>,
+			typename TList::Head,
+			candidate
+			>;
+	};
+
+	template <typename T>
+	struct MostDerivedType<NullType, T> {
+		using type = T;
+	};
+
+	template <typename T>
+	struct DerivedToFrontType {
+	private:
+		using the_most_derived = typename MostDerivedType<typename T::Tail, typename T::Head>::type;
+		using temp = typename ReplaceType<typename T::Tail, the_most_derived, typename T::Head>::type;
+	public:
+		using type = Typelist<the_most_derived, temp>;
+	};
+
+	template <>
+	struct DerivedToFrontType<NullType> {
+		using type = NullType;
+	};
+
 	template <typename TList, template <typename> typename Func>
 	struct ForEachType {
 		using type = Typelist<
-			typename Func<typename TList::Head>::type, 
+			typename Func<typename TList::Head>::type,
 			typename ForEachType<typename TList::Tail, Func>
 		::type>;
 	};
@@ -241,7 +272,7 @@ namespace TL {
 
 }
 
-template <typename... Args>	
+template <typename... Args>
 using List = TL::MakeList_t<Args...>;
 
 template <class TList>
@@ -272,9 +303,13 @@ template <typename TList, typename T, typename U>
 using Replace = typename TL::ReplaceType<TList, T, U>::type;
 
 template <typename T>
+using DerivedToFront = typename TL::DerivedToFrontType<T>::type;
+
+template <typename T>
 inline constexpr static bool IsTypelist = TL::is_typelist<T>::value;
 
 template <typename TList, template <typename> typename Func>
 using ForEach = typename TL::ForEachType<TList, Func>::type;
+
 
 #endif //TYPELIST_HPP
